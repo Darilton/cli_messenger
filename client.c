@@ -41,14 +41,14 @@ int main(int argc, char *argv[]){
 		printf("you: ");
 		void * success = fgets(message, MESSAGE_LEN - 1, stdin);
 		if(!success)
-			die_with_error(2, "Failure reading your message\n");
+			break;
 		send(my_socket, message, MESSAGE_LEN, 0);	
 		memset(message, '\0', MESSAGE_LEN);
 		recv(my_socket, message, MESSAGE_LEN, 0);	
 		printf("server: %s", message);
 	}
 
-	printf("I am working\n");
+	printf("\nProgram terminated\n");
 	return 0;
 }
 
