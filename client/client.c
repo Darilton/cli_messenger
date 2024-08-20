@@ -5,12 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <arpa/inet.h>
-#include <stdarg.h>
-
-#define PROGRAM_NAME "client"
-#define SOCKET int
-#define ADDRESS_TYPE AF_INET
-#define MESSAGE_LEN 100
+#include "../utils/utils.h"
 
 void die_with_error(int count, ...);
 
@@ -18,15 +13,16 @@ int main(int argc, char *argv[]){
 	char message[MESSAGE_LEN];
 
 	if(argc != 3)
-		die_with_error(4,PROGRAM_NAME, ": bad usage: ", PROGRAM_NAME, " <server ip> <port>\n");
+		die_with_error(4,argv[0], ": usage: ", argv[0], " <server ip> <port>\n");
 
 	char * server_ip = argv[1];
 	short port = atoi(argv[2]);
 
 	SOCKET my_socket = socket(ADDRESS_TYPE, SOCK_STREAM, IPPROTO_TCP);
 	if(my_socket < 0)
-		die_with_error(2, "Error creating socket: ", strerror(errno));
+		die_with_error(3, argv[0], ": Error creating socket: ", strerror(errno));
 
+	printf("Socket: %d\n", my_socket);
 	struct sockaddr_in server;
 	server.sin_port = htons(port);
 	server.sin_family = ADDRESS_TYPE;
@@ -34,7 +30,7 @@ int main(int argc, char *argv[]){
 		die_with_error(1, "Invalid ip address: must be in form ddd.ddd.ddd.ddd\n");
 
 	if(connect(my_socket, (struct sockaddr *) &server, sizeof(server)))
-		die_with_error(1, "Unable to connect to server: \n");
+		die_with_error(2, argv[0], ": unable to connect to server\n");
 
 	printf("Type in your messages to be sent to the echo server\n");
 	while(1){
@@ -47,16 +43,7 @@ int main(int argc, char *argv[]){
 		recv(my_socket, message, MESSAGE_LEN, 0);	
 		printf("server: %s", message);
 	}
-
-	printf("\nProgram terminated\n");
+	close();
+	printf("\nProgram terminated successfuly\n");
 	return 0;
 }
-
-void die_with_error(int count, ...){
-	va_list args;
-	va_start(args, count);
-	
-	for(int i = 0; i < count; i++)
-		printf("%s", va_arg(args, char *));	
-	exit(EXIT_FAILURE);
-};

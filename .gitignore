@@ -38,7 +38,6 @@
 *.x86_64
 *.hex
 a.out
-client
 
 # Debug files
 *.dSYM/
